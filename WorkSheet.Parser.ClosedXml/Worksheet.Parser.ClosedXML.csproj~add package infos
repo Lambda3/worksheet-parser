@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <PackageId>Worksheet.Parser.ClosedXML</PackageId>
+    <Version>1.0.0-beta.1</Version>
+    <Authors>William Espinosa de Rezende</Authors>
+    <Company>Lambda3</Company>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.94.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Worksheet.Parser.AspNetCore\Worksheet.Parser.AspNetCore.csproj" />
+    <ProjectReference Include="..\Wroksheet.Parser\Worksheet.Parser.csproj" />
+  </ItemGroup>
+
+</Project>
