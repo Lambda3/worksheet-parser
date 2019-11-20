@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Worksheet.Parser.Sample\Worksheet.Parser.Sample.csproj" />
+    <ProjectReference Include="..\..\Wroksheet.Parser\Worksheet.Parser.csproj" />
+  </ItemGroup>
+</Project>

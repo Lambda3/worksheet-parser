@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Worksheet.Parser.AspNetCore\Worksheet.Parser.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\Worksheet.Parser.ClosedXML\Worksheet.Parser.ClosedXML.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Sample.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

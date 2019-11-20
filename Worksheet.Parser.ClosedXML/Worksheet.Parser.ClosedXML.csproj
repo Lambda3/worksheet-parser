@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.94.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Worksheet.Parser.AspNetCore\Worksheet.Parser.AspNetCore.csproj" />
+    <ProjectReference Include="..\Wroksheet.Parser\Worksheet.Parser.csproj" />
+  </ItemGroup>
+
+</Project>
