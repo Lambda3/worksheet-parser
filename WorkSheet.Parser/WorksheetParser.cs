@@ -1,54 +1,50 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Worksheet.Parser
 {
-    public class WorksheetParser<T> where T : class, new()
+    public abstract class WorksheetParser<T> where T : class, new()
     {
-        private readonly ValueSetter valueSetter;
-        private readonly WorksheetMap<T> worksheetMap;
-        private readonly MessageErrors messageErrors;
+        protected readonly WorksheetInterpreter<T> parser;
+        protected readonly MessageErrors messageErrors;
 
-        public WorksheetParser(ValueSetter valueSetter,
-            WorksheetMap<T> worksheetMap,
-            MessageErrors messageErrors)
-            => (this.valueSetter, this.worksheetMap, this.messageErrors)
-            = (valueSetter, worksheetMap, messageErrors);
-
-        public virtual ValidationResult<T> Parse(WorksheetReader worksheet)
+        public WorksheetParser(WorksheetInterpreter<T> parser, MessageErrors messageErrors)
         {
-            var validationResult = new ValidationResult<T>();
+            this.parser = parser;
+            this.messageErrors = messageErrors;
+        }
 
-            var fields = worksheetMap.GetFields().ToDictionary(x => x.Name);
-            var headerResult = worksheet.GetHeaderWithValidation(worksheetMap, messageErrors);
-            validationResult.AddResult(headerResult);
+        protected abstract WorksheetReader GetReader(string path, string worksheetName);
 
-            if (!validationResult.IsSuccess)
-                return validationResult;
+        protected abstract WorksheetReader GetReader(Stream stream, string worksheetName);
 
-            var header = headerResult.Itens;
-            for (var row = worksheet.StartRowItens; row < worksheet.CountRows() + worksheet.StartRow; row++)
-            {
-                var item = new T();
-                var validationRow = new ValidationResult<T>();
-                for (var column = worksheet.StartColumn; column < worksheet.CountColumns() + worksheet.StartColumn; column++)
-                {
-                    var headerName = header[column - worksheet.StartColumn];
-                    if (headerName == messageErrors.HeaderFirstColumnWithErrors)
-                        continue;
-                    var field = fields[headerName];
+        protected abstract MemoryStream Write(WorksheetReader reader);
 
-                    if (field.ShouldBeIgnored)
-                        continue;
+        public virtual ValidationResult<T> Parse(string path, string worksheetName)
+        {
+            using var reader = GetReader(path, worksheetName);
+            return parser.Parse(reader);
+        }
+        public virtual ValidationResult<T> Parse(Stream stream, string worksheetName)
+        {
+            using var reader = GetReader(stream, worksheetName);
+            return parser.Parse(reader);
+        }
 
-                    var value = worksheet.GetCellValue(row, column);
-                    var validationColumn = valueSetter.SetValue(field, item, value, row, column, messageErrors);
-                    validationRow.AddResult(validationColumn);
-                }
-                validationRow.AddItem(item);
-                validationResult.AddResult(validationRow);
-            }
+        public virtual MemoryStream WriteErrors(Stream stream, string worksheetName, List<Error> erros)
+        {
+            var reader = GetReader(stream, worksheetName);
+            erros.ForEach(e => reader.AddError(e));
+            var streamWithErrors = new MemoryStream();
+            return Write(reader);
+        }
 
-            return validationResult;
+        public virtual MemoryStream WriteErrorsWithSummary(Stream stream, string worksheetName, List<Error> erros)
+        {
+            var reader = GetReader(stream, worksheetName);
+            erros.ForEach(e => reader.AddError(e));
+            reader.AddFirstColumnWithErrors(erros, messageErrors);
+            return Write(reader);
         }
     }
 }

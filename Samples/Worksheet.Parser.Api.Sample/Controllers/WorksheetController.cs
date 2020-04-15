@@ -11,9 +11,9 @@ namespace Worksheet.Parser.Api.Sample.Controllers
     {
         private const string worksheetName = "SampleSheet";
         private const string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-        private readonly WorksheetDefault<WeatherForecast> worksheet;
+        private readonly WorksheetParser<WeatherForecast> parser;
 
-        public WorksheetController(WorksheetDefault<WeatherForecast> worksheet) => this.worksheet = worksheet;
+        public WorksheetController(WorksheetParser<WeatherForecast> parser) => this.parser = parser;
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -21,12 +21,12 @@ namespace Worksheet.Parser.Api.Sample.Controllers
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Sample.xlsx");
             var bytes = await System.IO.File.ReadAllBytesAsync(path);
             using var stream = new MemoryStream(bytes);
-            var result = worksheet.Parse(stream, worksheetName);
+            var result = parser.Parse(stream, worksheetName);
 
             if (result.IsSuccess)
                 return Ok(result.Itens);
 
-            using var streamWithErrors = worksheet.AddFirstColumnsWithErrors(stream, worksheetName, result.Errors);
+            using var streamWithErrors = parser.WriteErrorsWithSummary(stream, worksheetName, result.Errors);
             return File(streamWithErrors.ToArray(), contentType, "planilha.xlsx");
         }
     }

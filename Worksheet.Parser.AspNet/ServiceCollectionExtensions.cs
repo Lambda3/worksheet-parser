@@ -6,9 +6,10 @@ namespace Worksheet.Parser.AspNetCore
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddWorksheetParser(this IServiceCollection serviceCollection, Func<ParserBuilder, ParserBuilder> builder)
+        public static void AddWorksheetParser<T>(this IServiceCollection serviceCollection, Func<ParserBuilder<T>, ParserBuilder<T>> builder)
+            where T : class, new()
         {
-            builder(new ParserBuilder(serviceCollection));
+            builder(new ParserBuilder<T>(serviceCollection));
             serviceCollection.AddWorksheetParser();
         }
 

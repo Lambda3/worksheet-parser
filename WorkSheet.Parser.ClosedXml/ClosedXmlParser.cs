@@ -3,9 +3,9 @@ using ClosedXML.Excel;
 
 namespace Worksheet.Parser.ClosedXML
 {
-    public class ClosedXmlWorksheet<T> : WorksheetDefault<T> where T : class, new()
+    public class ClosedXmlParser<T> : WorksheetParser<T> where T : class, new()
     {
-        public ClosedXmlWorksheet(WorksheetParser<T> parser, MessageErrors messageErrors) : base(parser, messageErrors) { }
+        public ClosedXmlParser(WorksheetInterpreter<T> parser, MessageErrors messageErrors) : base(parser, messageErrors) { }
 
         protected override WorksheetReader GetReader(string path, string worksheetName) => GetReader(new XLWorkbook(path), worksheetName);
 
