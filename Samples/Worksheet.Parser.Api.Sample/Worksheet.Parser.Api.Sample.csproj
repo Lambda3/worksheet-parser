@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>afb37648-3c30-4539-9c3c-a5c5ed7d6f17</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Worksheet.Parser.AspNet\Worksheet.Parser.AspNet.csproj" />
+    <ProjectReference Include="..\..\WorkSheet.Parser.ClosedXml\Worksheet.Parser.ClosedXml.csproj" />
+    <ProjectReference Include="..\..\WorkSheet.Parser\Worksheet.Parser.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Sample.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+
+</Project>
