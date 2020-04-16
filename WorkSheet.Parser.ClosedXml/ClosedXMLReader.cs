@@ -5,8 +5,8 @@ namespace Worksheet.Parser.ClosedXML
 {
     public class ClosedXmlReader : WorksheetReader
     {
-        private readonly IXLWorksheet worksheet;
-        private readonly XLWorkbook workbook;
+        private IXLWorksheet worksheet;
+        private XLWorkbook workbook;
 
         public ClosedXmlReader(XLWorkbook workbook, string workSheetName)
         {
@@ -42,11 +42,25 @@ namespace Worksheet.Parser.ClosedXML
 
         public override void InsertNewColumnBeforeFirst(string header)
         {
-            worksheet.Range(StartRow, StartColumn, CountRows(), StartColumn).InsertColumnsBefore(StartColumn);
-            SetCellValue(StartRow, StartColumn, header);
-            worksheet.Column(StartColumn).SetAutoFilter();
-            worksheet.Range(StartRow, StartColumn, CountRows(), CountColumns()).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
-            worksheet.Columns().AdjustToContents();
+            var newWorkbook = new XLWorkbook();
+            var newWorksheet = newWorkbook.Worksheets.Add(worksheet.Name);
+
+            newWorksheet.Cell(StartRow, StartColumn).Value = header;
+            for (var row = StartRow; row <= CountRows(); row++)
+                for (var column = StartColumn; column <= CountColumns(); column++)
+                    newWorksheet.Cell(row, column + 1).Value = worksheet.Cell(row, column);
+
+            for (var column = StartColumn; column <= CountColumns(); column++)
+                newWorksheet.Column(column + 1).Width = worksheet.Column(column).Width;
+
+            worksheet.Delete();
+            workbook.Dispose();
+            worksheet = newWorksheet;
+            workbook = newWorkbook;
+
+            newWorksheet.Column(StartColumn).SetAutoFilter();
+            newWorksheet.Column(StartColumn).Width = header.Length + 2;
+            newWorksheet.Range(StartRow, StartColumn, CountRows(), CountColumns()).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
         }
 
         private void FormatCellWithError(IXLCell cell)
